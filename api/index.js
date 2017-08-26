@@ -4,12 +4,13 @@ const express = require('express')
 const helmet = require('helmet')
 const bodyParser = require('body-parser')
 const compression = require('compression')
-const morgan = require('morgan')
 const log = require('debug')('APP')
 
 const apiRouter = require('./router/api')
 const { initDatabase, getCollection } = require('./database')
 const { injectModel, expressLogger } = require('./services/middleware')
+
+const envBool = process.env.NODE_ENV === 'test'
 
 const listen = () => {
   /*
@@ -19,7 +20,7 @@ const listen = () => {
   /*
   Middleware
   */
-  app.use(expressLogger(process.env.NODE_ENV === 'test', log))
+  app.use(expressLogger(envBool, log))
   app.use(compression())
   app.use(helmet())
   app.use(bodyParser.json());

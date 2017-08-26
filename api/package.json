@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.17.2",
     "compression": "^1.7.0",
     "debug": "^3.0.1",
@@ -22,7 +23,7 @@
     "isemail": "^3.0.0",
     "mongodb": "^2.2.31",
     "mongoose": "^4.11.8",
-    "monogram": "^0.1.6",
-    "morgan": "^1.8.2"
+    "morgan": "^1.8.2",
+    "transmission": "^0.4.9"
   }
 }
