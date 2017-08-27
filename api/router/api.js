@@ -3,15 +3,24 @@ const listEndpoints = require('express-list-endpoints')
 const expressStatusMonitor = require('express-status-monitor')
 
 const { catchErrors, ignoreErrors } = require('../utils/async')
-const { basicAuth } = require('../services/middleware')
+const { basicAuth, isAuthenticated, populateUser } = require('../services/middleware')
 const CTRL = require('./controller')
 
 const router = Router()
 
-router.use('/status', basicAuth, expressStatusMonitor())
-
 router.get('/', (req, res) => res.json(listEndpoints(router)))
+
+router.use('/status', basicAuth, expressStatusMonitor())
+router.post('/login', catchErrors(CTRL.usersCtrl.login))
+router.get('/logout', isAuthenticated, populateUser, catchErrors(CTRL.usersCtrl.logout))
 router.post('/signup', catchErrors(CTRL.usersCtrl.createAccount))
+
+router.get('/account/activate', catchErrors(CTRL.usersCtrl.activateAccount))
+router.route('/account/password/reset')
+  .post(catchErrors(CTRL.usersCtrl.forgetPassword.forgetPasswordPost))
+  .get(catchErrors(CTRL.usersCtrl.forgetPassword.forgetPasswordGet))
+router.route('/account/password/modify')
+  .post(isAuthenticated, catchErrors(CTRL.usersCtrl.forgetPassword.forgetPasswordPost))
 
 
 // router.route('/contact')

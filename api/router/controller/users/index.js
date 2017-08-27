@@ -1,4 +1,6 @@
 exports.login = require('./login')
 exports.logout = require('./logout')
 exports.createAccount = require('./create')
-exports.ActivateAccount = require('./activate')
+exports.activateAccount = require('./activate')
+exports.forgetPassword = require('./password/forget')
+exports.modifyPassword = require('./password/modify')

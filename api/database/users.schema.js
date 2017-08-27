@@ -83,6 +83,7 @@ userSchema.methods.setActivationToken = function setActivationToken(token, cb) {
 
 userSchema.methods.activateUser = function activateUser() {
   this.activated = true
+  this.activationToken = ''
   return this.save()
 }
 

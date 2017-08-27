@@ -1,5 +1,6 @@
 module.exports = login = async (req, res) => {
   res.json({
-    state: 'Done'
+    username: req.body.username,
+    password: req.body.password
   })
 }

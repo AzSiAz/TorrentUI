@@ -10,12 +10,11 @@ module.exports = createAccount = async (req, res) => {
     gender,
     name
   } = req.body
-
   if (password !== confirmPassword) 
     throw new Error('Password is not the same')
   if (!isMail.validate(email))
     throw new Error('Incorrect or empty email')
-  if (username || gender)
+  if (username === '' || username === undefined)
     throw new Error('Username or Gender incorrect')
 
   const userObj = {
@@ -44,6 +43,7 @@ module.exports = createAccount = async (req, res) => {
     })
     return
   }
+
   try {
     const user = new req.Users(userObj)
     await user.save()
