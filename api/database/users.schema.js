@@ -5,22 +5,26 @@ const bcrypt = require('bcrypt-nodejs')
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+
   passwordResetToken: String,
   passwordResetExpires: Date,
+  
   retryConnectNumber: { type: Number, default: 0 },
   lastTimeConnectRetry: Date,
-  
+
+  activated: { type: Boolean, default: false },
+  activationToken: { type: String, default: '' },
+
   tokens: Array,
   
   profile: {
     name: { type: String, default: 'Anonyme' },
     premiumDate: Date,
     addedTorrent: Number,
-    lastSeen: { type: Date, default: new Date() },
+    lastSeen: { type: Date, default: Date.now },
     username: { type: String, required: true, unique: true },
     gender: { type: String, enum: ['Male', 'Female', 'Autre'], required: true },
-    debug: { type: Boolean, default: false },
-    rank: { type: Number, enum: [ 0, 1, 2, 3 ], default: 0 }
+    rank: { type: String, enum: [ 'Admin', 'Moderator', 'Member', 'Premium Member' ], default: 'Member' }
   }
 }, {
   timestamps: true
@@ -28,11 +32,12 @@ const userSchema = new mongoose.Schema({
 
 /**
  * Password hash middleware.
+ * TODO look at https://github.com/emilbayes/secure-password for argon2 password hashing
  */
 userSchema.pre('save', function save(next) {
   const user = this
   if (!user.isModified('password')) { return next() }
-  bcrypt.genSalt(10, (err, salt) => {
+  bcrypt.genSalt(12, (err, salt) => {
     if (err) { return next(err) }
     bcrypt.hash(user.password, salt, null, (err, hash) => {
       if (err) { return next(err) }
@@ -69,6 +74,16 @@ userSchema.methods.updateRetry = function updateRetry() {
   this.retryConnectNumber++
   this.lastTimeConnectRetry = new Date()
   this.save()
+}
+
+userSchema.methods.setActivationToken = function setActivationToken(token, cb) {
+  this.activationToken = token
+  return this.save()
+}
+
+userSchema.methods.activateUser = function activateUser() {
+  this.activated = true
+  return this.save()
 }
 
 userSchema.virtual('avatar_200').get(function() {

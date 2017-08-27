@@ -1,4 +1,5 @@
 const isMail = require('isemail')
+const { sendSignUpEmail } = require('../../../services/mail')
 
 module.exports = createAccount = async (req, res) => {
   const { 
@@ -44,7 +45,9 @@ module.exports = createAccount = async (req, res) => {
     return
   }
   try {
-    await new req.Users(userObj).save()
+    const user = new req.Users(userObj)
+    await user.save()
+    sendSignUpEmail({ host: req.headers.host, user: user }).catch(console.error)
     res
       .json({
         status: 'Done',
