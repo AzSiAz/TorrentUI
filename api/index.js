@@ -25,7 +25,7 @@ const listen = () => {
   app.use(helmet())
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(express.static('./../web/build'))
+  app.use(express.static('./../web/dist'))
   
   const { News, Torrents, Users } = getCollection()
   app.use(injectModel({ Users, News, Torrents }))
